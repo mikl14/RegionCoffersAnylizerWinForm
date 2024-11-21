@@ -25,9 +25,9 @@ namespace RegionCoffersAnylizerWinForm
 
          
 
-            comboBox1.Items.AddRange(new string[] { "adygea", "piterburg", "rostov", "tula" });
+            comboBox1.Items.AddRange(new string[] { "adygea", "volgograd", "rostov", "tula" });
 
-            oRM.InitDatas(db, "adygea", "yan_september_15_10");
+            oRM.InitDatas(db, "volgograd", "yan_september_15_10");
 
             dataTable = oRM.getRegionDataTable();
             dataGridView1.DataSource = dataTable;

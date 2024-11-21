@@ -63,7 +63,7 @@ namespace RegionCoffersAnylizerWinForm
           
 
             OktmoRegionsDictionary = regionsList.Where(x => x.Inn != null)
-                .GroupBy(x => x.Oktmo.Substring(0,8)).ToDictionary(g => g.Key, g => g.ToList());
+                .GroupBy(x => x.Oktmof.Substring(0,8)).ToDictionary(g => g.Key, g => g.ToList());
 
 
             foreach (var cofferEntry in coffersDictionary)
@@ -105,7 +105,7 @@ namespace RegionCoffersAnylizerWinForm
             {
                 for (int i = 0; i < dataEntry.Value.region.Count; i++)
                 {
-                    string primaryOKTMO = dataEntry.Value.region[i].Oktmo.Substring(0, 8);
+                    string primaryOKTMO = dataEntry.Value.region[i].Oktmof.Substring(0, 8);
 
                     if (!oktmoGroupedMap.ContainsKey(primaryOKTMO))
                     {

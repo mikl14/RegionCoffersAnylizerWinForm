@@ -13,17 +13,15 @@ public partial class Region
 
     public string? Adresf { get; set; }
 
-    public string? Okato { get; set; }
+    public string? Okatof { get; set; }
 
-    public string? Oktmo { get; set; }
+    public string? Oktmof { get; set; }
 
-    public string? Typep { get; set; }
-
-    public string? Typeofsn { get; set; }
-
-    public string? Typeermsp { get; set; }
+    public string? TypeObj { get; set; }
 
     public string? TypeMsp { get; set; }
+
+    public string? Typeermsp { get; set; }
 
     public string? OkvedOsn { get; set; }
 
@@ -33,13 +31,39 @@ public partial class Region
 
     public string? FactOkvedNeosn { get; set; }
 
+    public decimal? SchrFns { get; set; }
+
+    public DateTime? SchrActualDate { get; set; }
+
     public decimal? Schr { get; set; }
 
     public decimal? Viruchka { get; set; }
 
     public string? Systemnalog { get; set; }
 
+    public string? License { get; set; }
+
+    public string? kpp { get; set; }
+
+    public string? actualType { get; set; }
+
+    public DateTime? actualDate { get; set; }
+
+    public string? ul_okpo { get; set; }
+
+    public DateTime? lifeEndDate { get; set; }
+
+    public string? regAdress { get; set; }
+
+    public string? factoryType { get; set; }
+
+    public decimal? countTosp { get; set; }
+
+    public string? usingUsn { get; set; }
+
+    public decimal? oborot { get; set; }
+
     public string? SposobLikvid { get; set; }
 
-    public string? License { get; set; }
+   
 }
