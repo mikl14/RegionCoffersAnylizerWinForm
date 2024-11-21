@@ -26,23 +26,26 @@ namespace RegionCoffersAnylizerWinForm
             public void setReg(int reg) { this.countReg = reg; }
         }
 
-        public List<Models.Region> regionsList;
+        public List<Models.Region> regionsList =  new List<Models.Region>();
 
         public Dictionary<string, int> AllCountList = new Dictionary<string, int>();
 
-        public List<Models.Coffers> coffersList;
+        public List<Models.Coffers> coffersList = new List<Models.Coffers> ();
 
         public Dictionary<string,Record> dataDictionary = new Dictionary<string, Record>();
-        Dictionary<string, List<Models.Region>> regionsDictionary;
+        Dictionary<string, List<Models.Region>> regionsDictionary = new Dictionary<string, List<Models.Region>>();
 
-        Dictionary<string, Models.Coffers> coffersDictionary;
+        Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
 
 
         public void InitDatas(NalogiContext db, string tableName,string coffersTableName)
         {
-     
-
-            List<Models.Region> distinctRegionsList;
+            regionsList.Clear();
+            AllCountList.Clear();
+            coffersList.Clear();
+            dataDictionary.Clear();
+            regionsDictionary.Clear();
+            coffersDictionary.Clear();
 
          Dictionary<string, List<Models.Region>> OktmoRegionsDictionary;
 

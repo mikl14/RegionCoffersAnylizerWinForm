@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RegionCoffersAnylizerWinForm.Models;
 using System.Data;
+using System.Windows.Forms;
 
 namespace RegionCoffersAnylizerWinForm
 {
@@ -8,6 +9,8 @@ namespace RegionCoffersAnylizerWinForm
     {
 
         DataTable dataTable;
+        ORM oRM = new ORM();
+        NalogiContext db = new NalogiContext();
 
         public Form1()
         {
@@ -17,12 +20,14 @@ namespace RegionCoffersAnylizerWinForm
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            NalogiContext db = new NalogiContext();
+      
             db.Database.SetCommandTimeout(200);
 
-            ORM oRM = new ORM();
+         
 
-            oRM.InitDatas(db, "adygea", "april");
+            comboBox1.Items.AddRange(new string[] { "adygea", "piterburg", "rostov", "tula" });
+
+            oRM.InitDatas(db, "adygea", "yan_september_15_10");
 
             dataTable = oRM.getRegionDataTable();
             dataGridView1.DataSource = dataTable;
@@ -40,8 +45,15 @@ namespace RegionCoffersAnylizerWinForm
             {
                 string filename = saveFileDialog.FileName;
                 FileService.Save_xlxs(dataTable, filename);
-   
+
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            oRM.InitDatas(db, comboBox1.Text, "yan_september_15_10");
+
+            dataTable = oRM.getRegionDataTable();
         }
     }
 }

@@ -32,6 +32,7 @@
             dataGridView1 = new DataGridView();
             regionBindingSource = new BindingSource(components);
             button1 = new Button();
+            comboBox1 = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)regionBindingSource).BeginInit();
             SuspendLayout();
@@ -63,11 +64,21 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(757, 550);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(151, 28);
+            comboBox1.TabIndex = 2;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(966, 798);
+            Controls.Add(comboBox1);
             Controls.Add(button1);
             Controls.Add(dataGridView1);
             Name = "Form1";
@@ -83,5 +94,6 @@
         private DataGridView dataGridView1;
         private BindingSource regionBindingSource;
         private Button button1;
+        private ComboBox comboBox1;
     }
 }
