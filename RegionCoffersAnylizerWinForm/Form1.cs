@@ -19,7 +19,7 @@ namespace RegionCoffersAnylizerWinForm
 
             oRM.InitDatas(db,"adygea", "april");
 
-            dataGridView1.DataSource = oRM.regionsList;
+            dataGridView1.DataSource = oRM.getRegionDataTable();
             dataGridView1.AllowUserToAddRows = false;
         }
     }

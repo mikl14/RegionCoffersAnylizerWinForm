@@ -38,11 +38,14 @@
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(12, 12);
+            dataGridView1.MaximumSize = new Size(1920, 1080);
+            dataGridView1.MinimumSize = new Size(730, 480);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(730, 344);
+            dataGridView1.Size = new Size(730, 480);
             dataGridView1.TabIndex = 0;
             // 
             // regionBindingSource
