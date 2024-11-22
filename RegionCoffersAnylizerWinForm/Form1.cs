@@ -8,7 +8,7 @@ namespace RegionCoffersAnylizerWinForm
     public partial class Form1 : Form
     {
 
-        DataTable dataTable;
+        DataTable[] dataTables = new DataTable[5];
         ORM oRM = new ORM();
         NalogiContext db = new NalogiContext();
 
@@ -29,8 +29,8 @@ namespace RegionCoffersAnylizerWinForm
 
             oRM.InitDatas(db, "volgograd", "yan_september_15_10");
 
-            dataTable = oRM.getRegionDataTable();
-            dataGridView1.DataSource = dataTable;
+            dataTables = oRM.getRegionDataTable();
+            dataGridView1.DataSource = dataTables[0];
             dataGridView1.AllowUserToAddRows = false;
         }
 
@@ -44,7 +44,7 @@ namespace RegionCoffersAnylizerWinForm
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string filename = saveFileDialog.FileName;
-                FileService.Save_xlxs(dataTable, filename);
+                FileService.Save_xlxs(dataTables, filename);
 
             }
         }
@@ -53,7 +53,7 @@ namespace RegionCoffersAnylizerWinForm
         {
             oRM.InitDatas(db, comboBox1.Text, "yan_september_15_10");
 
-            dataTable = oRM.getRegionDataTable();
+            dataTables = oRM.getRegionDataTable();
         }
     }
 }

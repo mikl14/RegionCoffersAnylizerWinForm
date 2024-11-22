@@ -177,7 +177,22 @@ namespace RegionCoffersAnylizerWinForm
 
         }
 
-        public DataTable getRegionDataTable()
+        public DataTable GetListDataTable(List<Models.Region> regions)
+        {
+
+            DataTable dataTable = new DataTable();
+
+            dataTable.Columns.Add("Inn", typeof(string));
+
+            foreach(var region in regions)
+            {
+                dataTable.Rows.Add(region.Inn);
+            }
+
+            return dataTable;
+        }
+
+        public DataTable[] getRegionDataTable()
         {
 
             Dictionary<string, Record> oktmoGroupedMap = regroupByOktmo(dataDictionary);
@@ -187,21 +202,25 @@ namespace RegionCoffersAnylizerWinForm
             Dictionary<string, Models.Region> NoMspPayers = new Dictionary<string, Models.Region>();
 
 
-            DataTable dataTable = new DataTable();
+            DataTable[] dataTable = new DataTable[7];
 
-            dataTable.Columns.Add("OKTMO", typeof(string));
-            dataTable.Columns.Add("CountAll", typeof(int));
-            dataTable.Columns.Add("CountPayers", typeof(int));
-            dataTable.Columns.Add("PaersMsp1", typeof(int));
-            dataTable.Columns.Add("PaersMsp4", typeof(int));
-            dataTable.Columns.Add("PaersNoMsp", typeof(int));
-            dataTable.Columns.Add("SliceMsp1", typeof(decimal));
-            dataTable.Columns.Add("SliceMsp4", typeof(decimal)) ;
-            dataTable.Columns.Add("SliceNoMsp", typeof(decimal));
-            dataTable.Columns.Add("PercentsMsp1", typeof(decimal));
-            dataTable.Columns.Add("PercentsMsp4", typeof(decimal));
-            dataTable.Columns.Add("PercentsNoMsp", typeof(decimal));
-            dataTable.Columns.Add("Slice", typeof(string));
+            for(int i = 0; i < dataTable.Length;i++)
+            {
+                dataTable[i] = new DataTable();
+            }
+
+            dataTable[0].Columns.Add("OKTMO", typeof(string));
+            dataTable[0].Columns.Add("CountAll", typeof(int));
+            dataTable[0].Columns.Add("CountPayers", typeof(int));
+            dataTable[0].Columns.Add("PaersMsp1", typeof(int));
+            dataTable[0].Columns.Add("PaersMsp4", typeof(int));
+            dataTable[0].Columns.Add("PaersNoMsp", typeof(int));
+            dataTable[0].Columns.Add("SliceMsp1", typeof(decimal));
+            dataTable[0].Columns.Add("SliceMsp4", typeof(decimal)) ;
+            dataTable[0].Columns.Add("SliceNoMsp", typeof(decimal));
+            dataTable[0].Columns.Add("PercentsMsp1", typeof(decimal));
+            dataTable[0].Columns.Add("PercentsMsp4", typeof(decimal));
+            dataTable[0].Columns.Add("PercentsNoMsp", typeof(decimal));
 
 
   
@@ -209,10 +228,7 @@ namespace RegionCoffersAnylizerWinForm
 
             HashSet<Models.Region> findRegionInMsp(string param, List< Models.Region> regions)
             {
-
-                
                 HashSet <Models.Region> MspPayersResult = new HashSet<Models.Region>();
-
 
                     for (int i = 0; i < regions.Count; i++)
                     {
@@ -224,11 +240,16 @@ namespace RegionCoffersAnylizerWinForm
                         }
 
                     }
-
-
       
                 return MspPayersResult;
             }
+
+            List<Models.Region> persentsFullRegionsMsp1 = new List<Models.Region>();
+            List<Models.Region> persentsFullRegionsMsp4 = new List<Models.Region>();
+            List<Models.Region> persentsFullRegionsNoMsp = new List<Models.Region>();
+            List<Models.Region> FullRegionsMsp1 = new List<Models.Region>();
+            List<Models.Region> FullRegionsMsp4 = new List<Models.Region>();
+            List<Models.Region> FullRegionsNoMsp = new List<Models.Region>();
 
             foreach (var data in oktmoGroupedMap)
             {
@@ -236,22 +257,40 @@ namespace RegionCoffersAnylizerWinForm
                 HashSet<Models.Region> regionsMsp4 = findRegionInMsp("4", data.Value.region);
                 HashSet<Models.Region> regionsNoMsp = findRegionInMsp("other", data.Value.region);
 
-                dataTable.Rows.Add(data.Key, AllCountList[data.Key], data.Value.region.Count,
+                List<Models.Region> persentsRegionsMsp1 = GetPersents(95, regionsMsp1.ToList());
+                List<Models.Region> persentsRegionsMsp4 = GetPersents(95, regionsMsp4.ToList());
+                List<Models.Region> persentsRegionsNoMsp = GetPersents(95, regionsNoMsp.ToList());
+
+                persentsFullRegionsMsp1.AddRange(persentsRegionsMsp1);
+                persentsFullRegionsMsp4.AddRange(persentsRegionsMsp4);
+                persentsFullRegionsNoMsp.AddRange(persentsRegionsNoMsp);
+
+                FullRegionsMsp1.AddRange(regionsMsp1);
+                FullRegionsMsp4.AddRange(regionsMsp4);
+                FullRegionsNoMsp.AddRange(regionsNoMsp);
+
+                dataTable[0].Rows.Add(data.Key, AllCountList[data.Key], data.Value.region.Count,
                     regionsMsp1.Count,
                     regionsMsp4.Count,
                     regionsNoMsp.Count,
                     getSliceFromList(regionsMsp1.ToList()),
                     getSliceFromList(regionsMsp4.ToList()),
                     getSliceFromList(regionsNoMsp.ToList()),
-                    GetPersents(95, regionsMsp1.ToList()).Count,
-                    GetPersents(95, regionsMsp4.ToList()).Count,
-                    GetPersents(95, regionsNoMsp.ToList()).Count
+                    persentsRegionsMsp1.Count,
+                    persentsRegionsMsp4.Count,
+                    persentsRegionsNoMsp.Count
                     );
             }
 
+            dataTable[1] = GetListDataTable(persentsFullRegionsMsp1);
+            dataTable[2] = GetListDataTable(persentsFullRegionsMsp4);
+            dataTable[3] = GetListDataTable(persentsFullRegionsNoMsp);
+
+            dataTable[4] = GetListDataTable(FullRegionsMsp1);
+            dataTable[5] = GetListDataTable(FullRegionsMsp4);
+            dataTable[6] = GetListDataTable(FullRegionsNoMsp);
+
             return dataTable;
         }
-
-       
     }
 }
