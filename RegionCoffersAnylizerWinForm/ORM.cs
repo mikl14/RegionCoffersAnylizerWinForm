@@ -210,17 +210,17 @@ namespace RegionCoffersAnylizerWinForm
             }
 
             dataTable[0].Columns.Add("OKTMO", typeof(string));
-            dataTable[0].Columns.Add("CountAll", typeof(int));
-            dataTable[0].Columns.Add("CountPayers", typeof(int));
-            dataTable[0].Columns.Add("PaersMsp1", typeof(int));
-            dataTable[0].Columns.Add("PaersMsp4", typeof(int));
-            dataTable[0].Columns.Add("PaersNoMsp", typeof(int));
-            dataTable[0].Columns.Add("SliceMsp1", typeof(decimal));
-            dataTable[0].Columns.Add("SliceMsp4", typeof(decimal)) ;
-            dataTable[0].Columns.Add("SliceNoMsp", typeof(decimal));
-            dataTable[0].Columns.Add("PercentsMsp1", typeof(decimal));
-            dataTable[0].Columns.Add("PercentsMsp4", typeof(decimal));
-            dataTable[0].Columns.Add("PercentsNoMsp", typeof(decimal));
+            dataTable[0].Columns.Add("Общее число субъектов", typeof(int));
+            dataTable[0].Columns.Add("Число плательщиков", typeof(int));
+            dataTable[0].Columns.Add("Плательщики МСП1", typeof(int));
+            dataTable[0].Columns.Add("Плательщики МСП4", typeof(int));
+            dataTable[0].Columns.Add("Плательщики НЕ МСП", typeof(int));
+            dataTable[0].Columns.Add("Доля МСП1", typeof(decimal));
+            dataTable[0].Columns.Add("Доля МСП4", typeof(decimal)) ;
+            dataTable[0].Columns.Add("Доля НЕ МСП", typeof(decimal));
+            dataTable[0].Columns.Add("Отобраные МСП 1", typeof(decimal));
+            dataTable[0].Columns.Add("Отобраные МСП 4", typeof(decimal));
+            dataTable[0].Columns.Add("Отобраные НЕ МСП", typeof(decimal));
 
 
   
