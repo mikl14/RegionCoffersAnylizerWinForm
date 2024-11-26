@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             dataGridView1 = new DataGridView();
             regionBindingSource = new BindingSource(components);
             button1 = new Button();
@@ -42,12 +43,12 @@
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 12);
+            dataGridView1.Location = new Point(33, 12);
             dataGridView1.MaximumSize = new Size(1920, 1080);
             dataGridView1.MinimumSize = new Size(730, 200);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(896, 500);
+            dataGridView1.Size = new Size(745, 668);
             dataGridView1.TabIndex = 0;
             // 
             // regionBindingSource
@@ -56,18 +57,20 @@
             // 
             // button1
             // 
-            button1.Location = new Point(479, 738);
+            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button1.Location = new Point(335, 743);
             button1.Name = "button1";
-            button1.Size = new Size(94, 29);
+            button1.Size = new Size(298, 29);
             button1.TabIndex = 1;
-            button1.Text = "button1";
+            button1.Text = "Сохранить файл в excel";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
             // comboBox1
             // 
+            comboBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(757, 550);
+            comboBox1.Location = new Point(803, 12);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(151, 28);
             comboBox1.TabIndex = 2;
@@ -81,8 +84,9 @@
             Controls.Add(comboBox1);
             Controls.Add(button1);
             Controls.Add(dataGridView1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
-            Text = "Form1";
+            Text = "Калькулятор Долей";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)regionBindingSource).EndInit();

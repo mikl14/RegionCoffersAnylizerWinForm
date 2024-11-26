@@ -37,6 +37,8 @@ namespace RegionCoffersAnylizerWinForm
 
         Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
 
+        public List<string> tablesNames = new List<string>();
+
 
         public void InitDatas(NalogiContext db, string tableName,string coffersTableName)
         {
@@ -46,12 +48,18 @@ namespace RegionCoffersAnylizerWinForm
             dataDictionary.Clear();
             regionsDictionary.Clear();
             coffersDictionary.Clear();
+            tablesNames.Clear();
 
+
+            
          Dictionary<string, List<Models.Region>> OktmoRegionsDictionary;
 
-        
 
-         FormattableString SqlRequest = FormattableStringFactory.Create("SELECT * FROM coffers2024." + coffersTableName);
+            FormattableString sql = FormattableStringFactory.Create("SELECT table_name FROM information_schema.tables WHERE table_schema = 'gs2024' AND table_type = 'BASE TABLE'");
+
+            tablesNames = db.Database.SqlQuery<string>(sql).ToList();
+
+            FormattableString SqlRequest = FormattableStringFactory.Create("SELECT * FROM coffers2024." + coffersTableName);
             coffersList = db.Coffers.FromSql(SqlRequest).ToList();
             coffersDictionary = coffersList.GroupBy(x => x.Inn).ToDictionary(g => g.Key, g => g.FirstOrDefault());
 
