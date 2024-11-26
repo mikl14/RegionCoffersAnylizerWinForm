@@ -31,27 +31,50 @@ public partial class NalogiContext : DbContext
         {
             entity
                 .HasNoKey()
-                .ToTable("adygea", "gs2024");
+                .ToTable("volgograd", "gs2024");
 
-            entity.Property(e => e.Adresf).HasColumnName("adresf");
-            entity.Property(e => e.FactOkvedNeosn).HasColumnName("fact_okved_neosn");
-            entity.Property(e => e.FactOkvedOsn).HasColumnName("fact_okved_osn");
             entity.Property(e => e.Inn).HasColumnName("inn");
-            entity.Property(e => e.License).HasColumnName("license");
-            entity.Property(e => e.Naimobj).HasColumnName("naimobj");
-            entity.Property(e => e.Okato).HasColumnName("okato");
             entity.Property(e => e.Okpo).HasColumnName("okpo");
-            entity.Property(e => e.Oktmo).HasColumnName("oktmo");
-            entity.Property(e => e.OkvedNeosn).HasColumnName("okved_neosn");
-            entity.Property(e => e.OkvedOsn).HasColumnName("okved_osn");
-            entity.Property(e => e.Schr).HasColumnName("schr");
-            entity.Property(e => e.SposobLikvid).HasColumnName("sposob_likvid");
-            entity.Property(e => e.Systemnalog).HasColumnName("systemnalog");
+            entity.Property(e => e.Naimobj).HasColumnName("name");
+            entity.Property(e => e.Adresf).HasColumnName("adresf");
+            entity.Property(e => e.Okatof).HasColumnName("okatof");
+            entity.Property(e => e.TypeObj).HasColumnName("type_obj");
             entity.Property(e => e.TypeMsp).HasColumnName("type_msp");
-            entity.Property(e => e.Typeermsp).HasColumnName("typeermsp");
-            entity.Property(e => e.Typeofsn).HasColumnName("typeofsn");
-            entity.Property(e => e.Typep).HasColumnName("typep");
+            entity.Property(e => e.Typeermsp).HasColumnName("type_ermsp");
+            entity.Property(e => e.OkvedNeosn).HasColumnName("okved2_neosn");
+            entity.Property(e => e.OkvedOsn).HasColumnName("okved2_osn");
+            entity.Property(e => e.FactOkvedNeosn).HasColumnName("okved2_fact_neosn");
+            entity.Property(e => e.FactOkvedOsn).HasColumnName("okved2_fact_osn");
+
+            entity.Property(e => e.SchrFns).HasColumnName("schr_fns");
+            entity.Property(e => e.SchrActualDate).HasColumnName("schr_fns_actual_date");
+            entity.Property(e => e.Schr).HasColumnName("schr");
             entity.Property(e => e.Viruchka).HasColumnName("viruchka");
+            entity.Property(e => e.Systemnalog).HasColumnName("system_nalog");
+            entity.Property(e => e.License).HasColumnName("license");
+            entity.Property(e => e.kpp).HasColumnName("kpp");
+            entity.Property(e => e.actualType).HasColumnName("actual_type");
+            entity.Property(e => e.actualDate).HasColumnName("actual_date");
+
+            entity.Property(e => e.regAdress).HasColumnName("registry_adress");
+
+            entity.Property(e => e.factoryType).HasColumnName("factory_type");
+
+            entity.Property(e => e.countTosp).HasColumnName("count_tosp");
+
+            entity.Property(e => e.usingUsn).HasColumnName("using_usn");
+
+            entity.Property(e => e.oborot).HasColumnName("oborot");
+
+            entity.Property(e => e.Oktmof).HasColumnName("oktmof");
+
+
+            entity.Property(e => e.lifeEndDate).HasColumnName("life_end_date");
+
+            entity.Property(e => e.SposobLikvid).HasColumnName("sposob_likvid");
+          
+        
+          
         });
 
 
