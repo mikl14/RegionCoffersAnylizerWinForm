@@ -18,10 +18,10 @@ namespace RegionCoffersAnylizerWinForm
         {
             public int countReg = 0;
 
-            public List<Models.Region> region;
+            public HashSet<Models.Region> region;
             public Models.Coffers coffer;
 
-            public Record(List<Models.Region> region, Models.Coffers coffer) { this.region = region; this.coffer = coffer; }
+            public Record(HashSet<Models.Region> region, Models.Coffers coffer) { this.region = region; this.coffer = coffer; }
 
             public void setReg(int reg) { this.countReg = reg; }
         }
@@ -33,7 +33,7 @@ namespace RegionCoffersAnylizerWinForm
         public List<Models.Coffers> coffersList = new List<Models.Coffers> ();
 
         public Dictionary<string,Record> dataDictionary = new Dictionary<string, Record>();
-        Dictionary<string, List<Models.Region>> regionsDictionary = new Dictionary<string, List<Models.Region>>();
+        Dictionary<string, HashSet<Models.Region>> regionsDictionary = new Dictionary<string, HashSet<Models.Region>>();
 
         Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
 
@@ -58,7 +58,7 @@ namespace RegionCoffersAnylizerWinForm
 
             SqlRequest = FormattableStringFactory.Create("SELECT * FROM gs2024." + tableName);
             regionsList = (List<Models.Region>)db.Regions.FromSql(SqlRequest).ToList();
-            regionsDictionary = regionsList.Where(x => x.Inn != null) .GroupBy(x => x.Inn).ToDictionary(g => g.Key, g => g.ToList());
+            regionsDictionary = regionsList.Where(x => x.Inn != null) .GroupBy(x => x.Inn).ToDictionary(g => g.Key, g => g.ToHashSet());
 
           
 
@@ -85,14 +85,14 @@ namespace RegionCoffersAnylizerWinForm
 
         public int getCountDistinct(List<Models.Region> reg)
         {
-            HashSet<string> inns = new HashSet<string>();
+            HashSet<Models.Region> modelsReg = new HashSet<Models.Region>();
 
             foreach (var region in reg)
             {
-                inns.Add(region.Inn);
+                modelsReg.Add(region);
             }
 
-            return inns.Count;
+            return modelsReg.Count;
 
         }
         public Dictionary<string, Record> regroupByOktmo(Dictionary<string, Record> dataDictionary)
@@ -103,9 +103,9 @@ namespace RegionCoffersAnylizerWinForm
 
             foreach (var dataEntry in dataDictionary)
             {
-                for (int i = 0; i < dataEntry.Value.region.Count; i++)
+                foreach (var region in dataEntry.Value.region)
                 {
-                    string primaryOKTMO = dataEntry.Value.region[i].Oktmof.Substring(0, 8);
+                    string primaryOKTMO = region.Oktmof.Substring(0, 8);
 
                     if (!oktmoGroupedMap.ContainsKey(primaryOKTMO))
                     {
@@ -114,15 +114,15 @@ namespace RegionCoffersAnylizerWinForm
                
 
                         buf.coffer = dataEntry.Value.coffer;
-                        buf.region = new List<Models.Region>();
-                        buf.region.Add(dataEntry.Value.region[i]);
+                        buf.region = new HashSet<Models.Region>();
+                        buf.region.Add(region);
 
                         oktmoGroupedMap.Add(primaryOKTMO, buf);
                     }
                     else
                     {
                       
-                            oktmoGroupedMap[primaryOKTMO].region.Add(dataEntry.Value.region[i]);
+                            oktmoGroupedMap[primaryOKTMO].region.Add(region);
                           
              
                     }
@@ -151,7 +151,12 @@ namespace RegionCoffersAnylizerWinForm
 
             List<Models.Coffers> coffersBuf = new List<Models.Coffers>();
 
+            List<Models.Region> result = new List<Models.Region>();
 
+            if (regions.Count <= 4 )
+            {
+                return regions;
+            }
             foreach (var region in regions)
             {
                 coffersBuf.Add(coffersDictionary[region.Inn]);
@@ -159,8 +164,9 @@ namespace RegionCoffersAnylizerWinForm
 
             coffersBuf.Sort((x, y) => y.Slice.CompareTo(x.Slice));
 
-            List<Models.Region> result = new List<Models.Region> ();
+           
 
+            
             foreach (var coffers in coffersBuf)
             {
                 if (comulativeSum < (sum * (persents * (decimal)0.01)))
@@ -226,16 +232,16 @@ namespace RegionCoffersAnylizerWinForm
   
 
 
-            HashSet<Models.Region> findRegionInMsp(string param, List< Models.Region> regions)
+            HashSet<Models.Region> findRegionInMsp(string param, HashSet<Models.Region> regions)
             {
-                HashSet <Models.Region> MspPayersResult = new HashSet<Models.Region>();
+                HashSet<Models.Region> MspPayersResult = new HashSet<Models.Region>();
 
-                    for (int i = 0; i < regions.Count; i++)
+                    foreach (var region in regions)
                     {
-                        if (regions[i].TypeMsp == param || (param == "other" && regions[i].TypeMsp != "1" && regions[i].TypeMsp != "4"))
+                        if (region.TypeMsp == param || (param == "other" && region.TypeMsp != "1" && region.TypeMsp != "4"))
                         {
         
-                                MspPayersResult.Add(regions[i]);
+                                MspPayersResult.Add(region);
                      
                         }
 
