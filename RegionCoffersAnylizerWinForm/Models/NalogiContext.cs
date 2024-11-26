@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace RegionCoffersAnylizerWinForm.Models;
@@ -19,14 +20,19 @@ public partial class NalogiContext : DbContext
 
     public virtual DbSet<Coffers> Coffers { get; set; }
 
+
     
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=nalogi;Username=postgres;Password=schef2002");
+        => optionsBuilder.UseNpgsql("Host=10.177.33.105;Port=5432;Database=coffers2024;Username=postgres;Password=schef2002");
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+   
+
+
         modelBuilder.Entity<Region>(entity =>
         {
             entity
@@ -82,7 +88,7 @@ public partial class NalogiContext : DbContext
         {
             entity
                 .HasNoKey()
-                .ToTable("june", "coffers2024");
+                .ToTable("april", "coffers2024");
 
             entity.Property(e => e.Inn).HasColumnName("inn");
             entity.Property(e => e.Slice).HasColumnName("slice");
