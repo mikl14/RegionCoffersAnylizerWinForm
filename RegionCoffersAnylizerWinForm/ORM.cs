@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,20 +28,15 @@ namespace RegionCoffersAnylizerWinForm
         }
 
         public List<Models.Region> regionsList =  new List<Models.Region>();
-
         public Dictionary<string, int> AllCountList = new Dictionary<string, int>();
-
         public List<Models.Coffers> coffersList = new List<Models.Coffers> ();
-
         public Dictionary<string,Record> dataDictionary = new Dictionary<string, Record>();
         Dictionary<string, HashSet<Models.Region>> regionsDictionary = new Dictionary<string, HashSet<Models.Region>>();
-
         Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
-
         public List<string> tablesNames = new List<string>();
 
 
-        public void InitDatas(NalogiContext db, string tableName,string coffersTableName)
+        public void clearMemory()
         {
             regionsList.Clear();
             AllCountList.Clear();
@@ -49,9 +45,15 @@ namespace RegionCoffersAnylizerWinForm
             regionsDictionary.Clear();
             coffersDictionary.Clear();
             tablesNames.Clear();
+        }
 
+        public void InitDatas(NalogiContext db, string tableName,string coffersTableName)
+        {
 
-            
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+
+            clearMemory();
+
          Dictionary<string, List<Models.Region>> OktmoRegionsDictionary;
 
 
@@ -211,7 +213,11 @@ namespace RegionCoffersAnylizerWinForm
 
             Dictionary<string, Record> oktmoGroupedMap = regroupByOktmo(dataDictionary);
 
-           
+            coffersList.Clear();
+            dataDictionary.Clear();
+            regionsDictionary.Clear();
+            tablesNames.Clear();
+
             Dictionary<string, Models.Region> MspPayers4 = new Dictionary<string, Models.Region>();
             Dictionary<string, Models.Region> NoMspPayers = new Dictionary<string, Models.Region>();
 
@@ -275,6 +281,8 @@ namespace RegionCoffersAnylizerWinForm
                 List<Models.Region> persentsRegionsMsp4 = GetPersents(95, regionsMsp4.ToList());
                 List<Models.Region> persentsRegionsNoMsp = GetPersents(95, regionsNoMsp.ToList());
 
+
+
                 persentsFullRegionsMsp1.AddRange(persentsRegionsMsp1);
                 persentsFullRegionsMsp4.AddRange(persentsRegionsMsp4);
                 persentsFullRegionsNoMsp.AddRange(persentsRegionsNoMsp);
@@ -294,6 +302,9 @@ namespace RegionCoffersAnylizerWinForm
                     persentsRegionsMsp4.Count,
                     persentsRegionsNoMsp.Count
                     );
+
+                oktmoGroupedMap.Remove(data.Key );
+                AllCountList.Remove(data.Key);
             }
 
             dataTable[1] = GetListDataTable(persentsFullRegionsMsp1);
@@ -303,6 +314,8 @@ namespace RegionCoffersAnylizerWinForm
             dataTable[4] = GetListDataTable(FullRegionsMsp1);
             dataTable[5] = GetListDataTable(FullRegionsMsp4);
             dataTable[6] = GetListDataTable(FullRegionsNoMsp);
+
+            GC.Collect();
 
             return dataTable;
         }
