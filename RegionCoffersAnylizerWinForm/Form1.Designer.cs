@@ -34,6 +34,7 @@
             regionBindingSource = new BindingSource(components);
             button1 = new Button();
             comboBox1 = new ComboBox();
+            button2 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)regionBindingSource).BeginInit();
             SuspendLayout();
@@ -76,11 +77,23 @@
             comboBox1.TabIndex = 2;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button2.Location = new Point(668, 743);
+            button2.Name = "button2";
+            button2.Size = new Size(94, 29);
+            button2.TabIndex = 3;
+            button2.Text = "Анализ";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(966, 798);
+            Controls.Add(button2);
             Controls.Add(comboBox1);
             Controls.Add(button1);
             Controls.Add(dataGridView1);
@@ -99,5 +112,6 @@
         private BindingSource regionBindingSource;
         private Button button1;
         private ComboBox comboBox1;
+        private Button button2;
     }
 }
