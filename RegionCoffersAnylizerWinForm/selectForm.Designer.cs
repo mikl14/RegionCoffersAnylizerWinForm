@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(selectForm));
             checkedListBox1 = new CheckedListBox();
             button1 = new Button();
             textBox1 = new TextBox();
@@ -63,12 +64,15 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 453);
             Controls.Add(textBox1);
             Controls.Add(button1);
             Controls.Add(checkedListBox1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximumSize = new Size(818, 500);
+            MinimumSize = new Size(818, 500);
             Name = "selectForm";
-            Text = "selectForm";
+            Text = "Ввод значения";
             Load += selectForm_Load;
             ResumeLayout(false);
             PerformLayout();

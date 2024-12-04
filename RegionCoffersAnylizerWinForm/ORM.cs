@@ -9,6 +9,7 @@ using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RegionCoffersAnylizerWinForm
@@ -35,6 +36,7 @@ namespace RegionCoffersAnylizerWinForm
         static Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
         public static List<string> tablesNames = new List<string>();
         public static List<Filter> filters = new List<Filter>();
+        public static HashSet<string> okveds = new HashSet<string>();
 
 
         public static void clearMemory()
@@ -46,6 +48,8 @@ namespace RegionCoffersAnylizerWinForm
             regionsDictionary.Clear();
             coffersDictionary.Clear();
             tablesNames.Clear();
+            okveds.Clear();
+            //filters.Clear();
         }
 
         public static void InitDatas(NalogiContext db, string tableName,string coffersTableName)
@@ -69,6 +73,8 @@ namespace RegionCoffersAnylizerWinForm
 
             SqlRequest = FormattableStringFactory.Create("SELECT * FROM gs2024." + tableName);
             regionsList = (List<Models.Region>)db.Regions.FromSql(SqlRequest).ToList();
+
+            okveds = getOkved(regionsList);
 
             if (filters.Count > 0)
             {
@@ -213,11 +219,14 @@ namespace RegionCoffersAnylizerWinForm
 
             DataTable dataTable = new DataTable();
 
-            dataTable.Columns.Add("Inn", typeof(string));
+            dataTable.Columns.Add("ИНН", typeof(string));
+            dataTable.Columns.Add("ОКТМО факт", typeof(string));
+            dataTable.Columns.Add("ОКВЕД2 осн. факт.", typeof(string));
+            dataTable.Columns.Add("Доля от России", typeof(string));
 
-            foreach(var region in regions)
+            foreach (var region in regions)
             {
-                dataTable.Rows.Add(region.Inn);
+                dataTable.Rows.Add(region.Inn, region.Oktmof, region.FactOkvedOsn, coffersDictionary[region.Inn].Slice);
             }
 
             return dataTable;

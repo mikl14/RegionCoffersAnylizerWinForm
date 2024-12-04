@@ -94,6 +94,7 @@
             // 
             button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             button3.Location = new Point(181, 747);
+            button3.MaximumSize = new Size(94, 29);
             button3.Name = "button3";
             button3.Size = new Size(94, 29);
             button3.TabIndex = 4;

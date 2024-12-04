@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChartForm));
             panel1 = new Panel();
             plotView1 = new OxyPlot.WindowsForms.PlotView();
             comboBox1 = new ComboBox();
@@ -73,8 +74,9 @@
             ClientSize = new Size(954, 450);
             Controls.Add(comboBox1);
             Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ChartForm";
-            Text = "ChartForm";
+            Text = "График";
             Load += ChartForm_Load;
             panel1.ResumeLayout(false);
             ResumeLayout(false);

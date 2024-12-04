@@ -31,6 +31,7 @@ namespace RegionCoffersAnylizerWinForm
                 {
                     for (int j = 0; j < dataTable.Columns.Count; j++)
                     {
+                
                         worksheet.Cells[i + 2, j + 1].Value = dataTable.Rows[i][j];
                     }
                 }

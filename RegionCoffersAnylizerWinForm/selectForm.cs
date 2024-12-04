@@ -35,7 +35,7 @@ namespace RegionCoffersAnylizerWinForm
             if (type == "ОКВЕД фактический|входит")
             {
                 checkedListBox1.Visible = true;
-                okveds = ORM.getOkved(ORM.regionsList);
+                okveds = ORM.okveds;
                 checkedListBox1.Items.AddRange(okveds.Order().ToArray());
 
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(filterForm));
             flowLayoutPanel1 = new FlowLayoutPanel();
             addBtn = new Button();
             saveBtn = new Button();
@@ -38,12 +39,12 @@
             flowLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel1.Location = new Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(799, 414);
+            flowLayoutPanel1.Size = new Size(531, 414);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // addBtn
             // 
-            addBtn.Location = new Point(252, 420);
+            addBtn.Location = new Point(124, 420);
             addBtn.Name = "addBtn";
             addBtn.Size = new Size(94, 29);
             addBtn.TabIndex = 1;
@@ -53,7 +54,7 @@
             // 
             // saveBtn
             // 
-            saveBtn.Location = new Point(449, 420);
+            saveBtn.Location = new Point(293, 420);
             saveBtn.Name = "saveBtn";
             saveBtn.Size = new Size(94, 29);
             saveBtn.TabIndex = 2;
@@ -65,12 +66,15 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(532, 450);
             Controls.Add(saveBtn);
             Controls.Add(addBtn);
             Controls.Add(flowLayoutPanel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximumSize = new Size(550, 497);
+            MinimumSize = new Size(550, 497);
             Name = "filterForm";
-            Text = "filterForm";
+            Text = "Выбор фильтров";
             Load += filterForm_Load;
             ResumeLayout(false);
         }

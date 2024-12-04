@@ -18,6 +18,7 @@ namespace RegionCoffersAnylizerWinForm
         public Form1()
         {
             InitializeComponent();
+            comboBox1.Text = "volgograd";
         }
 
 
@@ -25,9 +26,10 @@ namespace RegionCoffersAnylizerWinForm
         {
             Load load = new Load();
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        
 
             loadApp(load, true);
-            comboBox1.Text = "volgograd";
+            
         }
 
         public void loadApp(Load form, bool firstLoad)
