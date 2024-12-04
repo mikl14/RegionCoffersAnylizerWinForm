@@ -13,6 +13,8 @@ namespace RegionCoffersAnylizerWinForm
         DataTable[] dataTables = new DataTable[5];
         NalogiContext db = new NalogiContext();
 
+
+
         public Form1()
         {
             InitializeComponent();
@@ -21,13 +23,11 @@ namespace RegionCoffersAnylizerWinForm
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
             Load load = new Load();
-
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            loadApp(load,true);
 
-            
+            loadApp(load, true);
+            comboBox1.Text = "volgograd";
         }
 
         public void loadApp(Load form, bool firstLoad)
@@ -48,13 +48,13 @@ namespace RegionCoffersAnylizerWinForm
             this.Invoke((MethodInvoker)delegate
             {
                 db.Database.SetCommandTimeout(200);
-                ORM oRM = new ORM();
 
-                oRM.InitDatas(db, "volgograd", "yan_september_15_10");
 
-                comboBox1.Items.AddRange(oRM.tablesNames.ToArray());
+                ORM.InitDatas(db, "volgograd", "yan_september_15_10");
 
-                dataTables = oRM.getRegionDataTable();
+                comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
+
+                dataTables = ORM.getRegionDataTable();
                 dataGridView1.DataSource = dataTables[0];
                 dataGridView1.AllowUserToAddRows = false;
 
@@ -84,8 +84,8 @@ namespace RegionCoffersAnylizerWinForm
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ORM oRM = new ORM();
-            oRM.InitDatas(db, comboBox1.Text, "yan_september_15_10");
+
+            ORM.InitDatas(db, comboBox1.Text, "yan_september_15_10");
 
             foreach (var dataTable in dataTables)
             {
@@ -93,7 +93,8 @@ namespace RegionCoffersAnylizerWinForm
             }
             dataGridView1.DataSource = dataTables[0];
 
-            dataTables = oRM.getRegionDataTable();
+
+            dataTables = ORM.getRegionDataTable();
 
             dataGridView1.DataSource = dataTables[0];
             dataGridView1.AllowUserToAddRows = false;
@@ -111,6 +112,24 @@ namespace RegionCoffersAnylizerWinForm
 
             // Открываем вторую форму
             secondForm.Show();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            filterForm filterForm = new filterForm();
+
+            filterForm.Show();
+        }
+
+        private void updateBtn_Click(object sender, EventArgs e)
+        {
+            ORM.InitDatas(db, comboBox1.Text, "yan_september_15_10");
+
+            comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
+
+            dataTables = ORM.getRegionDataTable();
+            dataGridView1.DataSource = dataTables[0];
+            dataGridView1.AllowUserToAddRows = false;
         }
     }
 }

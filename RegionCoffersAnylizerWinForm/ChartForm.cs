@@ -72,7 +72,7 @@ namespace RegionCoffersAnylizerWinForm
             var barSeries = new ColumnSeries();
 
             // Настраиваем оси
-            var categoryAxis = new CategoryAxis { Position = AxisPosition.Bottom }; // Устанавливаем категориальную ось слева
+            var categoryAxis = new CategoryAxis { Position = AxisPosition.Bottom}; // Устанавливаем категориальную ось слева
             categoryAxis.Labels.AddRange(dataBuf.Keys);
             plotModel.Axes.Add(categoryAxis);
 
@@ -87,7 +87,10 @@ namespace RegionCoffersAnylizerWinForm
             
             foreach (var pair in categoryAxis.Labels)
             {
-                barSeries.Items.Add(new ColumnItem { Value = ((double)dataBuf[pair])});
+                if (dataBuf[pair] > 0)
+                {
+                    barSeries.Items.Add(new ColumnItem { Value = ((double)dataBuf[pair]) });
+                }
             }
 
 
