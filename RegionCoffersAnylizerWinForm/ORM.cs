@@ -218,15 +218,17 @@ namespace RegionCoffersAnylizerWinForm
         {
 
             DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("ОКТМО 8 знаков", typeof(string));
-            dataTable.Columns.Add("ОКТМО факт", typeof(string));
             dataTable.Columns.Add("ИНН", typeof(string));
+            dataTable.Columns.Add("Название/ФИО", typeof(string));
+            dataTable.Columns.Add("ОКТМО МО", typeof(string));
+            dataTable.Columns.Add("ОКТМО факт", typeof(string));
             dataTable.Columns.Add("ОКВЕД2 осн. факт.", typeof(string));
             dataTable.Columns.Add("Доля от России", typeof(string));
+            dataTable.Columns.Add("Лицензия", typeof(string));
 
             foreach (var region in regions)
             {
-                dataTable.Rows.Add(region.Oktmof.Substring(0,8) , region.Oktmof,region.Inn, region.FactOkvedOsn, coffersDictionary[region.Inn].Slice);
+                dataTable.Rows.Add(region.Inn,region.Naimobj, region.Oktmof.Substring(0,8) , region.Oktmof, region.FactOkvedOsn, coffersDictionary[region.Inn].Slice,region.License);
             }
 
             return dataTable;
