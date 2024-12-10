@@ -22,7 +22,7 @@ public partial class NalogiContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=nalogi;Username=postgres;Password=schef2002");
+        => optionsBuilder.UseNpgsql("Host=10.177.33.105;Port=5432;Database=coffers2024;Username=postgres;Password=schef2002");
     //10.177.33.105 db: coffers2024
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

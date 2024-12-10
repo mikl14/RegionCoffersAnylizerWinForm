@@ -36,6 +36,10 @@ namespace RegionCoffersAnylizerWinForm
             {
                 checkedListBox1.Visible = true;
                 okveds = ORM.okveds;
+                if(okveds.Contains(null))
+                {
+                    okveds.Remove(null);
+                }
                 checkedListBox1.Items.AddRange(okveds.Order().ToArray());
 
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)

@@ -47,9 +47,17 @@ namespace RegionCoffersAnylizerWinForm
             dataDictionary.Clear();
             regionsDictionary.Clear();
             coffersDictionary.Clear();
-            tablesNames.Clear();
+    
             okveds.Clear();
             //filters.Clear();
+        }
+
+        public static void initTables(NalogiContext db)
+        {
+            tablesNames.Clear();
+            FormattableString sql = FormattableStringFactory.Create("SELECT table_name FROM information_schema.tables WHERE table_schema = 'gs2024' AND table_type = 'BASE TABLE'");
+
+            tablesNames = db.Database.SqlQuery<string>(sql).ToList();
         }
 
         public static void InitDatas(NalogiContext db, string tableName,string coffersTableName)
@@ -58,22 +66,20 @@ namespace RegionCoffersAnylizerWinForm
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 
             clearMemory();
+            GC.Collect();
 
             Dictionary<string, List<Models.Region>> OktmoRegionsDictionary;
 
-
-            FormattableString sql = FormattableStringFactory.Create("SELECT table_name FROM information_schema.tables WHERE table_schema = 'gs2024' AND table_type = 'BASE TABLE'");
-
-            tablesNames = db.Database.SqlQuery<string>(sql).ToList();
-
-            FormattableString SqlRequest = FormattableStringFactory.Create("SELECT * FROM coffers2024." + coffersTableName);
+            FormattableString SqlRequest = FormattableStringFactory.Create("SELECT * FROM coffers2024." + coffersTableName + " WHERE inn IN (SELECT inn from gs2024."+ tableName+")");
             coffersList = db.Coffers.FromSql(SqlRequest).ToList();
             coffersDictionary = coffersList.GroupBy(x => x.Inn).ToDictionary(g => g.Key, g => g.FirstOrDefault());
 
 
-            SqlRequest = FormattableStringFactory.Create("SELECT * FROM gs2024." + tableName);
+            SqlRequest = FormattableStringFactory.Create("SELECT * FROM gs2024." + tableName + " WHERE inn IN (SELECT inn from coffers2024." + coffersTableName + ")");
             regionsList = (List<Models.Region>)db.Regions.FromSql(SqlRequest).ToList();
 
+
+            
             okveds = getOkved(regionsList);
 
             if (filters.Count > 0)
@@ -106,6 +112,7 @@ namespace RegionCoffersAnylizerWinForm
             {
                 AllCountList.Add(oktmoEntry.Key, getCountDistinct(oktmoEntry.Value));
             }
+            db.Database.CloseConnection();
         }
 
         public static HashSet<string> getOkved(List<Models.Region> reg)

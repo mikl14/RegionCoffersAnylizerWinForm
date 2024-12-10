@@ -28,11 +28,11 @@ namespace RegionCoffersAnylizerWinForm
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
         
 
-            loadApp(load, true);
+            loadApp(load, true,"");
             
         }
 
-        public void loadApp(Load form, bool firstLoad)
+        public void loadApp(Load form, bool firstLoad,string db_name)
         {
             Task.Run(() =>
             {
@@ -40,6 +40,7 @@ namespace RegionCoffersAnylizerWinForm
                 if (firstLoad)
                 {
                     Application.SetCompatibleTextRenderingDefault(false);
+             
                 }
 
 
@@ -49,16 +50,26 @@ namespace RegionCoffersAnylizerWinForm
             // Вызов метода в дочерней форме из другого потока
             this.Invoke((MethodInvoker)delegate
             {
-                db.Database.SetCommandTimeout(200);
+                if(!firstLoad)
+                {
+                    this.Visible = false;
+                    db.Database.SetCommandTimeout(400);
+                  //  ORM.initTables(db);
+                    ORM.InitDatas(db, db_name, "yan_september_15_10");
+                    
 
+                   // comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
 
-                ORM.InitDatas(db, "volgograd", "yan_september_15_10");
-
-                comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
-
-                dataTables = ORM.getRegionDataTable();
-                dataGridView1.DataSource = dataTables[0];
-                dataGridView1.AllowUserToAddRows = false;
+                    dataTables = ORM.getRegionDataTable();
+                    dataGridView1.DataSource = dataTables[0];
+                    dataGridView1.AllowUserToAddRows = false;
+                    this.Visible = true;
+                }
+                else
+                {
+                    ORM.initTables(db);
+                    comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
+                }
 
             });
 
@@ -87,19 +98,22 @@ namespace RegionCoffersAnylizerWinForm
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-            ORM.InitDatas(db, comboBox1.Text, "yan_september_15_10");
+            Load load = new Load();
+            loadApp(load, false, comboBox1.Text);
+       
 
-            foreach (var dataTable in dataTables)
+          /*  if (!dataTables.Contains(null))
             {
-                dataTable.Clear();
+                foreach (var dataTable in dataTables)
+                {
+                    dataTable.Clear();
+                }
             }
-            dataGridView1.DataSource = dataTables[0];
+          */
+          //  dataTables = ORM.getRegionDataTable();
 
-
-            dataTables = ORM.getRegionDataTable();
-
-            dataGridView1.DataSource = dataTables[0];
-            dataGridView1.AllowUserToAddRows = false;
+            //dataGridView1.DataSource = dataTables[0];
+            //dataGridView1.AllowUserToAddRows = false;
 
             GC.Collect();
 
@@ -125,13 +139,15 @@ namespace RegionCoffersAnylizerWinForm
 
         private void updateBtn_Click(object sender, EventArgs e)
         {
-            ORM.InitDatas(db, comboBox1.Text, "yan_september_15_10");
+            Load load = new Load();
+            loadApp(load,false,comboBox1.Text);
+     
 
-            comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
+            /*comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
 
             dataTables = ORM.getRegionDataTable();
             dataGridView1.DataSource = dataTables[0];
-            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToAddRows = false;*/
         }
     }
 }
