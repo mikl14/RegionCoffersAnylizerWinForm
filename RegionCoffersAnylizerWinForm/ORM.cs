@@ -9,11 +9,12 @@ using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RegionCoffersAnylizerWinForm
 {
-    internal class ORM
+    internal static class ORM
     {
         public struct Record
         {
@@ -27,16 +28,18 @@ namespace RegionCoffersAnylizerWinForm
             public void setReg(int reg) { this.countReg = reg; }
         }
 
-        public List<Models.Region> regionsList =  new List<Models.Region>();
-        public Dictionary<string, int> AllCountList = new Dictionary<string, int>();
-        public List<Models.Coffers> coffersList = new List<Models.Coffers> ();
-        public Dictionary<string,Record> dataDictionary = new Dictionary<string, Record>();
-        Dictionary<string, HashSet<Models.Region>> regionsDictionary = new Dictionary<string, HashSet<Models.Region>>();
-        Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
-        public List<string> tablesNames = new List<string>();
+        public static List<Models.Region> regionsList =  new List<Models.Region>();
+        public static Dictionary<string, int> AllCountList = new Dictionary<string, int>();
+        public static List<Models.Coffers> coffersList = new List<Models.Coffers> ();
+        public static Dictionary<string,Record> dataDictionary = new Dictionary<string, Record>();
+        static Dictionary<string, HashSet<Models.Region>> regionsDictionary = new Dictionary<string, HashSet<Models.Region>>();
+        static Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
+        public static List<string> tablesNames = new List<string>();
+        public static List<Filter> filters = new List<Filter>();
+        public static HashSet<string> okveds = new HashSet<string>();
 
 
-        public void clearMemory()
+        public static void clearMemory()
         {
             regionsList.Clear();
             AllCountList.Clear();
@@ -44,33 +47,53 @@ namespace RegionCoffersAnylizerWinForm
             dataDictionary.Clear();
             regionsDictionary.Clear();
             coffersDictionary.Clear();
-            tablesNames.Clear();
+    
+            okveds.Clear();
+            //filters.Clear();
         }
 
-        public void InitDatas(NalogiContext db, string tableName,string coffersTableName)
+        public static void initTables(NalogiContext db)
+        {
+            tablesNames.Clear();
+            FormattableString sql = FormattableStringFactory.Create("SELECT table_name FROM information_schema.tables WHERE table_schema = 'gs2024' AND table_type = 'BASE TABLE'");
+
+            tablesNames = db.Database.SqlQuery<string>(sql).ToList();
+        }
+
+        public static void InitDatas(NalogiContext db, string tableName,string coffersTableName)
         {
 
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 
             clearMemory();
+            GC.Collect();
 
-         Dictionary<string, List<Models.Region>> OktmoRegionsDictionary;
+            Dictionary<string, List<Models.Region>> OktmoRegionsDictionary;
 
-
-            FormattableString sql = FormattableStringFactory.Create("SELECT table_name FROM information_schema.tables WHERE table_schema = 'gs2024' AND table_type = 'BASE TABLE'");
-
-            tablesNames = db.Database.SqlQuery<string>(sql).ToList();
-
-            FormattableString SqlRequest = FormattableStringFactory.Create("SELECT * FROM coffers2024." + coffersTableName);
+            FormattableString SqlRequest = FormattableStringFactory.Create("SELECT * FROM coffers2024." + coffersTableName + " WHERE inn IN (SELECT inn from gs2024."+ tableName+")");
             coffersList = db.Coffers.FromSql(SqlRequest).ToList();
             coffersDictionary = coffersList.GroupBy(x => x.Inn).ToDictionary(g => g.Key, g => g.FirstOrDefault());
 
 
-            SqlRequest = FormattableStringFactory.Create("SELECT * FROM gs2024." + tableName);
+            SqlRequest = FormattableStringFactory.Create("SELECT * FROM gs2024." + tableName + " WHERE inn IN (SELECT inn from coffers2024." + coffersTableName + ")");
             regionsList = (List<Models.Region>)db.Regions.FromSql(SqlRequest).ToList();
+
+
+            
+            okveds = getOkved(regionsList);
+
+            if (filters.Count > 0)
+            {
+                foreach (var filter in filters)
+                {
+                    regionsList = regionsList.Where(x => filter.isOperate(x)).ToList();
+                }
+            }
+
+
             regionsDictionary = regionsList.Where(x => x.Inn != null) .GroupBy(x => x.Inn).ToDictionary(g => g.Key, g => g.ToHashSet());
 
-          
+            
 
             OktmoRegionsDictionary = regionsList.Where(x => x.Inn != null)
                 .GroupBy(x => x.Oktmof.Substring(0,8)).ToDictionary(g => g.Key, g => g.ToList());
@@ -89,11 +112,21 @@ namespace RegionCoffersAnylizerWinForm
             {
                 AllCountList.Add(oktmoEntry.Key, getCountDistinct(oktmoEntry.Value));
             }
-
-
+            db.Database.CloseConnection();
         }
 
-        public int getCountDistinct(List<Models.Region> reg)
+        public static HashSet<string> getOkved(List<Models.Region> reg)
+        {
+            HashSet<string> okveds = new HashSet<string>();
+
+            foreach (var region in reg)
+            {
+                okveds.Add(region.FactOkvedOsn);
+            }
+            return okveds;
+        }
+
+        public static int getCountDistinct(List<Models.Region> reg)
         {
             HashSet<Models.Region> modelsReg = new HashSet<Models.Region>();
 
@@ -103,25 +136,22 @@ namespace RegionCoffersAnylizerWinForm
             }
 
             return modelsReg.Count;
-
         }
-        public Dictionary<string, Record> regroupByOktmo(Dictionary<string, Record> dataDictionary)
+
+        public static Dictionary<string, Record> regroupByOktmo(Dictionary<string, Record> dataDictionary, List<Filter> filters)
         {
             Dictionary<string,Record> oktmoGroupedMap = new Dictionary<string,Record>();
-
-            var noDataRegionsListDistict = regionsList.GroupBy(p => p.Inn).Select(g => g.First()).ToList();
 
             foreach (var dataEntry in dataDictionary)
             {
                 foreach (var region in dataEntry.Value.region)
                 {
+                  
                     string primaryOKTMO = region.Oktmof.Substring(0, 8);
 
                     if (!oktmoGroupedMap.ContainsKey(primaryOKTMO))
                     {
                         Record buf = new Record();
-
-               
 
                         buf.coffer = dataEntry.Value.coffer;
                         buf.region = new HashSet<Models.Region>();
@@ -131,18 +161,16 @@ namespace RegionCoffersAnylizerWinForm
                     }
                     else
                     {
-                      
-                            oktmoGroupedMap[primaryOKTMO].region.Add(region);
-                          
-             
+                        oktmoGroupedMap[primaryOKTMO].region.Add(region);
                     }
+                    
                 }
             }
 
             return oktmoGroupedMap;
         }
 
-        decimal getSliceFromList(List<Models.Region> regionList)
+        static decimal getSliceFromList(List<Models.Region> regionList)
         {
             decimal result = 0;
 
@@ -154,7 +182,7 @@ namespace RegionCoffersAnylizerWinForm
             return result;
         }
 
-        public List<Models.Region> GetPersents(int persents, List<Models.Region> regions)
+        public static List<Models.Region> GetPersents(int persents, List<Models.Region> regions)
         {
             decimal sum = getSliceFromList(regions);
             decimal comulativeSum = 0;
@@ -193,25 +221,32 @@ namespace RegionCoffersAnylizerWinForm
 
         }
 
-        public DataTable GetListDataTable(List<Models.Region> regions)
+        public static DataTable GetListDataTable(List<Models.Region> regions)
         {
 
             DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("ИНН", typeof(string));
+            dataTable.Columns.Add("Название/ФИО", typeof(string));
+            dataTable.Columns.Add("ОКТМО МО", typeof(string));
+            dataTable.Columns.Add("ОКТМО факт", typeof(string));
+            dataTable.Columns.Add("ОКВЕД2 осн. факт.", typeof(string));
+            dataTable.Columns.Add("Доля от России", typeof(string));
+            dataTable.Columns.Add("Лицензия", typeof(string));
 
-            dataTable.Columns.Add("Inn", typeof(string));
-
-            foreach(var region in regions)
+            foreach (var region in regions)
             {
-                dataTable.Rows.Add(region.Inn);
+                dataTable.Rows.Add(region.Inn,region.Naimobj, region.Oktmof.Substring(0,8) , region.Oktmof, region.FactOkvedOsn, coffersDictionary[region.Inn].Slice,region.License);
             }
 
             return dataTable;
         }
 
-        public DataTable[] getRegionDataTable()
+        public static DataTable[] getRegionDataTable()
         {
 
-            Dictionary<string, Record> oktmoGroupedMap = regroupByOktmo(dataDictionary);
+            Dictionary<string, Record> oktmoGroupedMap = regroupByOktmo(dataDictionary,filters);
+
+           
 
             coffersList.Clear();
             dataDictionary.Clear();

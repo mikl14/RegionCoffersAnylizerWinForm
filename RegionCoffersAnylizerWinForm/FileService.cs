@@ -21,16 +21,17 @@ namespace RegionCoffersAnylizerWinForm
 
             var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-            for (int i = 1; i <= dataTable.Columns.Count; i++)
+                for (int i = 1; i <= dataTable.Columns.Count; i++)
                 {
                     worksheet.Cells[1, i].Value = dataTable.Columns[i - 1].ColumnName;
                 }
-
+                
                 // Заполняем данные
                 for (int i = 0; i < dataTable.Rows.Count; i++)
                 {
                     for (int j = 0; j < dataTable.Columns.Count; j++)
                     {
+                
                         worksheet.Cells[i + 2, j + 1].Value = dataTable.Rows[i][j];
                     }
                 }

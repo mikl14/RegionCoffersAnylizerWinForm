@@ -35,6 +35,8 @@
             button1 = new Button();
             comboBox1 = new ComboBox();
             button2 = new Button();
+            button3 = new Button();
+            updateBtn = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)regionBindingSource).BeginInit();
             SuspendLayout();
@@ -88,11 +90,36 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // button3
+            // 
+            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button3.Location = new Point(181, 747);
+            button3.MaximumSize = new Size(94, 29);
+            button3.Name = "button3";
+            button3.Size = new Size(94, 29);
+            button3.TabIndex = 4;
+            button3.Text = "Фильтры";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // updateBtn
+            // 
+            updateBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            updateBtn.Location = new Point(417, 703);
+            updateBtn.Name = "updateBtn";
+            updateBtn.Size = new Size(94, 29);
+            updateBtn.TabIndex = 5;
+            updateBtn.Text = "Обновить";
+            updateBtn.UseVisualStyleBackColor = true;
+            updateBtn.Click += updateBtn_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(966, 798);
+            Controls.Add(updateBtn);
+            Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(comboBox1);
             Controls.Add(button1);
@@ -113,5 +140,7 @@
         private Button button1;
         private ComboBox comboBox1;
         private Button button2;
+        private Button button3;
+        private Button updateBtn;
     }
 }
