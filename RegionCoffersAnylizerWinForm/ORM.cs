@@ -14,42 +14,20 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RegionCoffersAnylizerWinForm
 {
+
     internal static class ORM
     {
-        public struct Record
-        {
-            public int countReg = 0;
-
-            public HashSet<Models.Region> region;
-            public Models.Coffers coffer;
-
-            public Record(HashSet<Models.Region> region, Models.Coffers coffer) { this.region = region; this.coffer = coffer; }
-
-            public void setReg(int reg) { this.countReg = reg; }
-        }
-
-        public static List<Models.Region> regionsList =  new List<Models.Region>();
-        public static Dictionary<string, int> AllCountList = new Dictionary<string, int>();
-        public static List<Models.Coffers> coffersList = new List<Models.Coffers> ();
-        public static Dictionary<string,Record> dataDictionary = new Dictionary<string, Record>();
-        static Dictionary<string, HashSet<Models.Region>> regionsDictionary = new Dictionary<string, HashSet<Models.Region>>();
         static Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
         public static List<string> tablesNames = new List<string>();
         public static List<Filter> filters = new List<Filter>();
         public static HashSet<string> okveds = new HashSet<string>();
 
+        public static DataService dataService;
 
         public static void clearMemory()
         {
-            regionsList.Clear();
-            AllCountList.Clear();
-            coffersList.Clear();
-            dataDictionary.Clear();
-            regionsDictionary.Clear();
             coffersDictionary.Clear();
-    
             okveds.Clear();
-            //filters.Clear();
         }
 
         public static void initTables(NalogiContext db)
@@ -62,13 +40,13 @@ namespace RegionCoffersAnylizerWinForm
 
         public static void InitDatas(NalogiContext db, string tableName,string coffersTableName)
         {
-
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 
+            List<Models.Coffers> coffersList = new List<Models.Coffers>();
+            Dictionary<string, Models.Coffers> coffersDictionary = new Dictionary<string, Models.Coffers>();
+            List<Models.Region> regionsList = new List<Models.Region>();
             clearMemory();
             GC.Collect();
-
-            Dictionary<string, List<Models.Region>> OktmoRegionsDictionary;
 
             FormattableString SqlRequest = FormattableStringFactory.Create("SELECT * FROM coffers2024." + coffersTableName + " WHERE inn IN (SELECT inn from gs2024."+ tableName+")");
             coffersList = db.Coffers.FromSql(SqlRequest).ToList();
@@ -78,9 +56,16 @@ namespace RegionCoffersAnylizerWinForm
             SqlRequest = FormattableStringFactory.Create("SELECT * FROM gs2024." + tableName + " WHERE inn IN (SELECT inn from coffers2024." + coffersTableName + ")");
             regionsList = (List<Models.Region>)db.Regions.FromSql(SqlRequest).ToList();
 
+      
 
-            
             okveds = getOkved(regionsList);
+
+
+            string sql = $"SELECT LEFT(oktmof,8) as oktmof,COUNT(distinct inn) as count FROM gs2024.{tableName} group by LEFT(oktmof,8)";
+
+            var res = db.Set<Models.CountRecord>().FromSqlRaw(sql).ToList();
+
+            var dictionary = res.ToDictionary(g => g.oktmof, g => g.count);
 
             if (filters.Count > 0)
             {
@@ -90,28 +75,8 @@ namespace RegionCoffersAnylizerWinForm
                 }
             }
 
+            dataService = new DataService(regionsList, coffersDictionary, dictionary);
 
-            regionsDictionary = regionsList.Where(x => x.Inn != null) .GroupBy(x => x.Inn).ToDictionary(g => g.Key, g => g.ToHashSet());
-
-            
-
-            OktmoRegionsDictionary = regionsList.Where(x => x.Inn != null)
-                .GroupBy(x => x.Oktmof.Substring(0,8)).ToDictionary(g => g.Key, g => g.ToList());
-
-
-            foreach (var cofferEntry in coffersDictionary)
-            {
-                if (regionsDictionary.ContainsKey(cofferEntry.Value.Inn))
-                {
-                    dataDictionary.Add(cofferEntry.Key, new Record(regionsDictionary[cofferEntry.Value.Inn], cofferEntry.Value));
-                }
-                
-            }
-
-            foreach(var oktmoEntry in OktmoRegionsDictionary)
-            {
-                AllCountList.Add(oktmoEntry.Key, getCountDistinct(oktmoEntry.Value));
-            }
             db.Database.CloseConnection();
         }
 
@@ -125,101 +90,7 @@ namespace RegionCoffersAnylizerWinForm
             }
             return okveds;
         }
-
-        public static int getCountDistinct(List<Models.Region> reg)
-        {
-            HashSet<Models.Region> modelsReg = new HashSet<Models.Region>();
-
-            foreach (var region in reg)
-            {
-                modelsReg.Add(region);
-            }
-
-            return modelsReg.Count;
-        }
-
-        public static Dictionary<string, Record> regroupByOktmo(Dictionary<string, Record> dataDictionary, List<Filter> filters)
-        {
-            Dictionary<string,Record> oktmoGroupedMap = new Dictionary<string,Record>();
-
-            foreach (var dataEntry in dataDictionary)
-            {
-                foreach (var region in dataEntry.Value.region)
-                {
-                  
-                    string primaryOKTMO = region.Oktmof.Substring(0, 8);
-
-                    if (!oktmoGroupedMap.ContainsKey(primaryOKTMO))
-                    {
-                        Record buf = new Record();
-
-                        buf.coffer = dataEntry.Value.coffer;
-                        buf.region = new HashSet<Models.Region>();
-                        buf.region.Add(region);
-
-                        oktmoGroupedMap.Add(primaryOKTMO, buf);
-                    }
-                    else
-                    {
-                        oktmoGroupedMap[primaryOKTMO].region.Add(region);
-                    }
-                    
-                }
-            }
-
-            return oktmoGroupedMap;
-        }
-
-        static decimal getSliceFromList(List<Models.Region> regionList)
-        {
-            decimal result = 0;
-
-            foreach (Models.Region region in regionList)
-            {
-
-                result += coffersDictionary[region.Inn].Slice;
-            }
-            return result;
-        }
-
-        public static List<Models.Region> GetPersents(int persents, List<Models.Region> regions)
-        {
-            decimal sum = getSliceFromList(regions);
-            decimal comulativeSum = 0;
-
-            List<Models.Coffers> coffersBuf = new List<Models.Coffers>();
-
-            List<Models.Region> result = new List<Models.Region>();
-
-            if (regions.Count <= 4 )
-            {
-                return regions;
-            }
-            foreach (var region in regions)
-            {
-                coffersBuf.Add(coffersDictionary[region.Inn]);
-            }
-
-            coffersBuf.Sort((x, y) => y.Slice.CompareTo(x.Slice));
-
-           
-
-            
-            foreach (var coffers in coffersBuf)
-            {
-                if (comulativeSum < (sum * (persents * (decimal)0.01)))
-                {
-                    result.Add(regions.Where(a => a.Inn == coffers.Inn).First());
-                    comulativeSum += coffers.Slice;
-                }
-                else
-                {
-                    return result;
-                }
-            }
-            return result;
-
-        }
+      
 
         public static DataTable GetListDataTable(List<Models.Region> regions)
         {
@@ -235,7 +106,7 @@ namespace RegionCoffersAnylizerWinForm
 
             foreach (var region in regions)
             {
-                dataTable.Rows.Add(region.Inn,region.Naimobj, region.Oktmof.Substring(0,8) , region.Oktmof, region.FactOkvedOsn, coffersDictionary[region.Inn].Slice,region.License);
+                dataTable.Rows.Add(region.Inn,region.Naimobj, region.Oktmof.Substring(0,8) , region.Oktmof, region.FactOkvedOsn, dataService.coffersDictionary[region.Inn].Slice,region.License);
             }
 
             return dataTable;
@@ -243,14 +114,7 @@ namespace RegionCoffersAnylizerWinForm
 
         public static DataTable[] getRegionDataTable()
         {
-
-            Dictionary<string, Record> oktmoGroupedMap = regroupByOktmo(dataDictionary,filters);
-
-           
-
-            coffersList.Clear();
-            dataDictionary.Clear();
-            regionsDictionary.Clear();
+        
             tablesNames.Clear();
 
             Dictionary<string, Models.Region> MspPayers4 = new Dictionary<string, Models.Region>();
@@ -277,23 +141,16 @@ namespace RegionCoffersAnylizerWinForm
             dataTable[0].Columns.Add("Отобраные МСП 4", typeof(decimal));
             dataTable[0].Columns.Add("Отобраные НЕ МСП", typeof(decimal));
 
-
-  
-
-
-            HashSet<Models.Region> findRegionInMsp(string param, HashSet<Models.Region> regions)
+            HashSet<Models.Region> findRegionInErmsp(string param, HashSet<Models.Region> regions)
             {
                 HashSet<Models.Region> MspPayersResult = new HashSet<Models.Region>();
 
                     foreach (var region in regions)
                     {
-                        if (region.TypeMsp == param || (param == "other" && region.TypeMsp != "1" && region.TypeMsp != "4"))
+                        if (region.Typeermsp == param || (param == "other" && region.Typeermsp != "1" && region.Typeermsp != "4"))
                         {
-        
                                 MspPayersResult.Add(region);
-                     
                         }
-
                     }
       
                 return MspPayersResult;
@@ -306,40 +163,44 @@ namespace RegionCoffersAnylizerWinForm
             List<Models.Region> FullRegionsMsp4 = new List<Models.Region>();
             List<Models.Region> FullRegionsNoMsp = new List<Models.Region>();
 
+            Dictionary<string, HashSet<Record>> oktmoGroupedMap = dataService.getRecordsByOktmo();
+
             foreach (var data in oktmoGroupedMap)
             {
-                HashSet<Models.Region> regionsMsp1 = findRegionInMsp("1", data.Value.region);
-                HashSet<Models.Region> regionsMsp4 = findRegionInMsp("4", data.Value.region);
-                HashSet<Models.Region> regionsNoMsp = findRegionInMsp("other", data.Value.region);
-
-                List<Models.Region> persentsRegionsMsp1 = GetPersents(95, regionsMsp1.ToList());
-                List<Models.Region> persentsRegionsMsp4 = GetPersents(95, regionsMsp4.ToList());
-                List<Models.Region> persentsRegionsNoMsp = GetPersents(95, regionsNoMsp.ToList());
+               
+                    HashSet<Models.Region> regionsMsp1 = findRegionInErmsp("1", dataService.getHashSetByPrimaryOktmo(data.Key));
+                    HashSet<Models.Region> regionsMsp4 = findRegionInErmsp("4", dataService.getHashSetByPrimaryOktmo(data.Key));
+                    HashSet<Models.Region> regionsNoMsp = findRegionInErmsp("other", dataService.getHashSetByPrimaryOktmo(data.Key));
 
 
 
-                persentsFullRegionsMsp1.AddRange(persentsRegionsMsp1);
-                persentsFullRegionsMsp4.AddRange(persentsRegionsMsp4);
-                persentsFullRegionsNoMsp.AddRange(persentsRegionsNoMsp);
+                    List<Models.Region> persentsRegionsMsp1 = dataService.GetPersents(95, regionsMsp1.ToList());
+                    List<Models.Region> persentsRegionsMsp4 = dataService.GetPersents(95, regionsMsp4.ToList());
+                    List<Models.Region> persentsRegionsNoMsp = dataService.GetPersents(95, regionsNoMsp.ToList());
 
-                FullRegionsMsp1.AddRange(regionsMsp1);
-                FullRegionsMsp4.AddRange(regionsMsp4);
-                FullRegionsNoMsp.AddRange(regionsNoMsp);
 
-                dataTable[0].Rows.Add(data.Key, AllCountList[data.Key], data.Value.region.Count,
-                    regionsMsp1.Count,
-                    regionsMsp4.Count,
-                    regionsNoMsp.Count,
-                    getSliceFromList(regionsMsp1.ToList()),
-                    getSliceFromList(regionsMsp4.ToList()),
-                    getSliceFromList(regionsNoMsp.ToList()),
-                    persentsRegionsMsp1.Count,
-                    persentsRegionsMsp4.Count,
-                    persentsRegionsNoMsp.Count
-                    );
 
-                oktmoGroupedMap.Remove(data.Key );
-                AllCountList.Remove(data.Key);
+                    persentsFullRegionsMsp1.AddRange(persentsRegionsMsp1);
+                    persentsFullRegionsMsp4.AddRange(persentsRegionsMsp4);
+                    persentsFullRegionsNoMsp.AddRange(persentsRegionsNoMsp);
+
+                    FullRegionsMsp1.AddRange(regionsMsp1);
+                    FullRegionsMsp4.AddRange(regionsMsp4);
+                    FullRegionsNoMsp.AddRange(regionsNoMsp);
+
+                    dataTable[0].Rows.Add(data.Key, dataService.AllCountList[data.Key], data.Value.Count,
+                        regionsMsp1.Count,
+                        regionsMsp4.Count,
+                        regionsNoMsp.Count,
+                        dataService.getSliceFromList(regionsMsp1.ToList()),
+                        dataService.getSliceFromList(regionsMsp4.ToList()),
+                        dataService.getSliceFromList(regionsNoMsp.ToList()),      
+                        persentsRegionsMsp1.Count,
+                        persentsRegionsMsp4.Count,
+                        persentsRegionsNoMsp.Count
+                        );
+
+                    oktmoGroupedMap.Remove(data.Key);     
             }
 
             dataTable[1] = GetListDataTable(persentsFullRegionsMsp1);
