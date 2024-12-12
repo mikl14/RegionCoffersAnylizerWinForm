@@ -20,10 +20,17 @@ public partial class NalogiContext : DbContext
 
     public virtual DbSet<Coffers> Coffers { get; set; }
 
+    string Host = Properties.app.Default.Host;
+    string Port = Properties.app.Default.Port;
+    string DataBase = Properties.app.Default.DataBase;
+    string UserName = Properties.app.Default.UserName;
+    string Password = Properties.app.Default.Password;
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=nalogi;Username=postgres;Password=schef2002");
-    //10.177.33.105 db: coffers2024
+        => optionsBuilder.UseNpgsql($"Host={Host};Port={Port};Database={DataBase};Username={UserName};Password={Password}");
+ 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
