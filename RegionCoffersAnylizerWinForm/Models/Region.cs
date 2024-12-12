@@ -77,7 +77,7 @@ public partial class Region
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Inn);
+        return Inn.GetHashCode() ;
     }
 
 }
