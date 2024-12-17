@@ -25,7 +25,7 @@ namespace RegionCoffersAnylizerWinForm.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10.177.33.105")]
+        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
         public string Host {
             get {
                 return ((string)(this["Host"]));
@@ -43,7 +43,7 @@ namespace RegionCoffersAnylizerWinForm.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("coffers2024")]
+        [global::System.Configuration.DefaultSettingValueAttribute("nalogi")]
         public string DataBase {
             get {
                 return ((string)(this["DataBase"]));
