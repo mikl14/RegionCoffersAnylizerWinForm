@@ -139,5 +139,12 @@ namespace RegionCoffersAnylizerWinForm
             return OktmoRegionsDictionary[oktmoPrimary].ToHashSet();
         }
 
+        public void clear()
+        {
+            OktmoRegionsDictionary.Clear();
+            AllCountList.Clear();
+            coffersDictionary.Clear();
+            regionsList.Clear();
+        }
     }
 }

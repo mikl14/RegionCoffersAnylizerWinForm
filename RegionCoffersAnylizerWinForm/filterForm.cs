@@ -14,8 +14,8 @@ namespace RegionCoffersAnylizerWinForm
 {
     public partial class filterForm : Form
     {
-        private Dictionary<int,Filter> filters = new Dictionary<int,Filter>();
-        private Dictionary<string,string> translatorEngtoRus = new Dictionary<string,string>();
+        private Dictionary<int, Filter> filters = new Dictionary<int, Filter>();
+        private Dictionary<string, string> translatorEngtoRus = new Dictionary<string, string>();
         private Dictionary<string, string> translatorRustoEng = new Dictionary<string, string>();
 
         private int currentRow = 0;
@@ -27,28 +27,28 @@ namespace RegionCoffersAnylizerWinForm
 
         private void filterForm_Load(object sender, EventArgs e)
         {
-          
+
             translatorEngtoRus.Add("FactOkvedOsn", "ОКВЕД фактический");
             translatorEngtoRus.Add("License", "Лицензия");
 
-            translatorRustoEng.Add( "ОКВЕД фактический", "FactOkvedOsn");
+            translatorRustoEng.Add("ОКВЕД фактический", "FactOkvedOsn");
             translatorRustoEng.Add("Лицензия", "License");
 
             updateWindow();
         }
 
-        
+
         private void updateWindow()
         {
-            if(ORM.filters.Count > 0)
+            if (ORM.filters.Count > 0)
             {
-                for(int i = 0; i < ORM.filters.Count; i++)
+                for (int i = 0; i < ORM.filters.Count; i++)
                 {
                     AddNewRow(translatorEngtoRus[ORM.filters[i].columnName], ORM.filters[i].isNot, ORM.filters[i].operate, ORM.filters[i].values);
 
                     filters[i] = ORM.filters[i];
                 }
-               
+
             }
         }
 
@@ -65,27 +65,27 @@ namespace RegionCoffersAnylizerWinForm
             string value = sb.ToString();
 
             sb.Clear();
-       
+
             var existingForm = Application.OpenForms.OfType<selectForm>().FirstOrDefault();
 
-                    if (existingForm != null)
-                    {
-                        // Если окно уже открыто, просто активируем его
-                        existingForm.Close();
-                    }
+            if (existingForm != null)
+            {
+                // Если окно уже открыто, просто активируем его
+                existingForm.Close();
+            }
 
-                    selectForm selectForm = new selectForm(filters[rowIndex].values);
+            selectForm selectForm = new selectForm(filters[rowIndex].values);
 
-                    selectForm.type = value;
-                    selectForm.index = rowIndex;
-                    selectForm.DataPassed += selectForm_DataPassed;
-                    selectForm.Show();
+            selectForm.type = value;
+            selectForm.index = rowIndex;
+            selectForm.DataPassed += selectForm_DataPassed;
+            selectForm.Show();
 
-                   
-            
+
+
         }
 
-        private void AddNewRow(string fieldValue = "", bool notBoxState = false,string operatorValue = "",List<string> value = null)
+        private void AddNewRow(string fieldValue = "", bool notBoxState = false, string operatorValue = "", List<string> value = null)
         {
             // Создаем новые элементы управления
             ComboBox fieldBox = new ComboBox();
@@ -93,7 +93,7 @@ namespace RegionCoffersAnylizerWinForm
 
             Button showSelectForm = new Button();
 
-       
+
             CheckBox notBox = new CheckBox();
 
 
@@ -101,13 +101,13 @@ namespace RegionCoffersAnylizerWinForm
 
             // Настраиваем элементы управления
 
-            fieldBox.Items.AddRange(new string[] {"ОКВЕД фактический", "Лицензия" });
+            fieldBox.Items.AddRange(new string[] { "ОКВЕД фактический", "Лицензия" });
             fieldBox.Name = $"fieldBox{currentRow}";
             fieldBox.Width = 150;
             fieldBox.Text = fieldValue;
             fieldBox.SelectedIndexChanged += fieldBox_SelectedIndexChanged1;
             fieldBox.Tag = currentRow;
-     
+
 
             notBox.Checked = notBoxState;
             notBox.CheckedChanged += NotBox_CheckedChanged;
@@ -115,28 +115,28 @@ namespace RegionCoffersAnylizerWinForm
             notBox.Tag = currentRow;
             notBox.Text = "Не";
             notBox.Width = 50;
-        
+
             operatorBox.Items.AddRange(new string[] { "равно", "входит", "начало" });
             operatorBox.Name = $"operatorBox{currentRow}";
             operatorBox.Width = 150;
             operatorBox.Text = operatorValue;
             operatorBox.SelectedIndexChanged += OperatorBox_SelectedIndexChanged;
             operatorBox.Tag = currentRow;
-        
 
 
 
-            showSelectForm.Click +=  showSelectWindow;
+
+            showSelectForm.Click += showSelectWindow;
             showSelectForm.Name += $"showForm{currentRow}";
             showSelectForm.Tag = currentRow;
-            if(value != null && value.Count > 0)
+            if (value != null && value.Count > 0)
             {
                 showSelectForm.BackColor = Color.Green;
             }
-            
 
 
-    
+
+
             btnRemove.Text = "Удалить";
             btnRemove.Tag = currentRow; // Сохраняем индекс строки
             btnRemove.Click += BtnRemove_Click;
@@ -148,7 +148,7 @@ namespace RegionCoffersAnylizerWinForm
             flowLayoutPanel1.Controls.Add(showSelectForm);
             flowLayoutPanel1.Controls.Add(btnRemove);
 
-            filters.Add(currentRow,new Filter());
+            filters.Add(currentRow, new Filter());
 
             currentRow++;
         }
@@ -160,7 +160,10 @@ namespace RegionCoffersAnylizerWinForm
 
             filters[rowIndex].operate = flowLayoutPanel1.Controls[$"operatorBox{rowIndex}"].Text;
 
-            filters[rowIndex].values.Clear();
+            if (filters[rowIndex].values != null)
+            {
+                filters[rowIndex].values.Clear();
+            }
             flowLayoutPanel1.Controls[$"showForm{rowIndex}"].BackColor = Color.White;
         }
 
@@ -231,7 +234,12 @@ namespace RegionCoffersAnylizerWinForm
 
             flowLayoutPanel1.Controls[$"showForm{index}"].BackColor = Color.Green;
 
-           // MessageBox.Show($"Данные получены: {data}");
+            // MessageBox.Show($"Данные получены: {data}");
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

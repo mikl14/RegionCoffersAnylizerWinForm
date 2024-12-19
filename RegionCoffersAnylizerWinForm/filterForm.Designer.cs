@@ -41,6 +41,7 @@
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(531, 414);
             flowLayoutPanel1.TabIndex = 0;
+            flowLayoutPanel1.Paint += flowLayoutPanel1_Paint;
             // 
             // addBtn
             // 

@@ -40,6 +40,10 @@ namespace RegionCoffersAnylizerWinForm
 
         public static void InitDatas(NalogiContext db, string tableName,string coffersTableName)
         {
+            if (dataService != null)
+            {
+                dataService.clear();
+            }
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 
             List<Models.Coffers> coffersList = new List<Models.Coffers>();
