@@ -12,6 +12,7 @@ namespace RegionCoffersAnylizerWinForm
 
         DataTable[] dataTables = new DataTable[5];
         NalogiContext db = new NalogiContext();
+        string coffersTable = Properties.app.Default.coffersTable;
 
 
 
@@ -55,7 +56,7 @@ namespace RegionCoffersAnylizerWinForm
                     this.Visible = false;
                     db.Database.SetCommandTimeout(400);
                   //  ORM.initTables(db);
-                    ORM.InitDatas(db, db_name, "yan_september_15_10");
+                    ORM.InitDatas(db, db_name, coffersTable);
                     
 
                    // comboBox1.Items.AddRange(ORM.tablesNames.ToArray());
