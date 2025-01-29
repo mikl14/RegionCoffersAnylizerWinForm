@@ -67,5 +67,14 @@ namespace RegionCoffersAnylizerWinForm.Properties {
                 return ((string)(this["Password"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("year_2024")]
+        public string coffersTable {
+            get {
+                return ((string)(this["coffersTable"]));
+            }
+        }
     }
 }
